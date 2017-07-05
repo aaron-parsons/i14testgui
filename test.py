@@ -23,12 +23,23 @@ testing some stuff
 
 
 
-def get_visits():
+# def get_visits():
+# 
+#     import getpass
+#     from subprocess import Popen, PIPE
+#     
+#     p = Popen(['sh','/dls_sw/apps/mx-scripts/visit_tools/getVisitsForFedId',getpass.getuser()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+#     output, err = p.communicate(b"input data that is passed to subprocess' stdin")
+#     rc = p.returncode
+#     return output
 
-    import getpass
-    from subprocess import Popen, PIPE
-    
-    p = Popen(['sh','/dls_sw/apps/mx-scripts/visit_tools/getVisitsForFedId',getpass.getuser()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+def get_current_visit():
+    import os
+    from subprocess import Popen, PIPE,call
+#     p = call(['sh','/dls_sw/apps/mx-scripts/visit_tools/currentvisit','$BEAMLINE'])
+    p = Popen(['sh','/dls_sw/apps/mx-scripts/visit_tools/currentvisit',os.environ["BEAMLINE"]], stdin=PIPE, stdout=PIPE, stderr=PIPE)
     output, err = p.communicate(b"input data that is passed to subprocess' stdin")
-    rc = p.returncode
     return output
+    
+if __name__ == "__main__":
+    get_current_visit()

@@ -136,9 +136,11 @@ class SaveDialog(QWidget):
         
         self.visit  = QTextEdit()
         self.visit.setFixedHeight(2.0*self.visit.fontMetrics().height())
-        
+        self.visit.setText(str(self.getCurrentVisit())) # by default its the current visit for $BEAMLINE
+
         self.save_name  = QTextEdit()
         self.save_name.setFixedHeight(2.0*self.save_name.fontMetrics().height())
+        self.save_name.setText(str(self.getInitialProcessList()))
         
         self.scan = QTextEdit()
         self.scan.setFixedHeight(2.0*self.scan.fontMetrics().height())
@@ -164,6 +166,15 @@ class SaveDialog(QWidget):
         form.addWidget(self.run_button)
 
         self.setLayout(form)
+
+    def getInitialProcessList(self):
+        return self.model.filename.split(os.sep)[-1]
+        
+    def getCurrentVisit(self):
+        from subprocess import Popen, PIPE
+        p = Popen(['sh','/dls_sw/apps/mx-scripts/visit_tools/currentvisit',os.environ["BEAMLINE"]], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        output, __err = p.communicate(b"input data that is passed to subprocess' stdin")
+        return output
 
     def getVisitDirectory(self):
         visit = str(self.visit.toPlainText().rstrip('\n').rstrip())
