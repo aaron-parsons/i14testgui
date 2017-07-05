@@ -180,7 +180,7 @@ class SaveDialog(QWidget):
 
     def getVisitDirectory(self):
         visit = str(self.visit.toPlainText().rstrip('\n').rstrip())
-        return '/dls/i14/data/2017/%s/' % visit
+        return '/dls/%s/data/2017/%s/' % (str(os.environ['BEAMLINE']),visit)
     
     def getSaveName(self):
         return str(self.save_name.toPlainText().rstrip('\n').rstrip())
@@ -201,7 +201,14 @@ class SaveDialog(QWidget):
     
     def getDataPath(self):
         scan_number = str(self.scan.toPlainText().rstrip('\n').rstrip())
-        return self.getVisitDirectory()+'i14-%s.nxs' % scan_number
+        if str(os.environ['BEAMLINE'])=='i14':
+            return self.getVisitDirectory()+'i14-%s.nxs' % scan_number
+        elif str(os.environ['BEAMLINE'])=='i08':
+            return self.getVisitDirectory()+'nexus/i08-%s.nxs' % scan_number
+        else:
+            raise NameError("I don't recognise this beamline!")
+        
+        
 
     def saveButtonChecked(self):
         if self.save_button.isDown():
