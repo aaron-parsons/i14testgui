@@ -202,13 +202,14 @@ class SaveDialog(QWidget):
             print "I should run something here"
             print "On data" + self.getDataPath()
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    process_list ='/dls/science/users/clb02321/DAWN_stable/Savu/Savu/test_data/test_process_lists/pymca_test.nxs'
+def main(process_list):
+    app = QApplication([])
     model = Content()
     model.fopen(process_list)
-    
     ex = PluginEditor(model)
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    process_list =main(sys.argv[1])
+    main()
 
