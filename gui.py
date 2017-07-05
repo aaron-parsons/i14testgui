@@ -175,7 +175,6 @@ class SaveDialog(QWidget):
     def getOutputDirectory(self):
         op = self.getVisitDirectory() + 'processing/savu'
         if not self.output_dir_exists:
-            import os
             print("Creating output directory....")
             try:
                 os.mkdir(op)
@@ -208,6 +207,8 @@ def main(process_list):
     model.fopen(process_list)
     ex = PluginEditor(model)
     sys.exit(app.exec_())
+
+
 
 if __name__ == '__main__':
     process_list =main(sys.argv[1])
