@@ -4,7 +4,7 @@ A quick gui for the pymca fitting
 '''
 
 from content import Content
-from PyQt5.QtWidgets import QApplication, QWidget, QFormLayout, QSpinBox, QTextEdit, QDoubleSpinBox, QGridLayout, QLabel,QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QFormLayout, QSpinBox, QLineEdit, QDoubleSpinBox, QGridLayout, QLabel,QPushButton
 from PyQt5.QtGui import QFont
 import sys
 import os
@@ -50,7 +50,7 @@ class SavuDoubleSpinBox(QDoubleSpinBox):
         self.parent.model.modify(self.parent.plugin_number, self.key, val)
 
 
-class SavuTextBox(QTextEdit):
+class SavuTextBox(QLineEdit):
     '''
     widget that does text editing
     '''
@@ -125,7 +125,9 @@ class PluginEditor(QWidget):
         save_stuff = SaveDialog(self.model)
         layout.addWidget(save_stuff,1,1)
         self.setLayout(layout)
-        self.setWindowTitle('I14 XRF GUI')
+        w = 2280; h = 1520
+        self.resize(w/2,h/2)
+        self.setWindowTitle('Savu Processing')
         self.show()
 
 class SaveDialog(QWidget):
@@ -134,15 +136,15 @@ class SaveDialog(QWidget):
         self.output_dir_exists = None
         super(SaveDialog, self).__init__()
         
-        self.visit  = QTextEdit()
+        self.visit  = QLineEdit()
         self.visit.setFixedHeight(2.0*self.visit.fontMetrics().height())
         self.visit.setText(str(self.getCurrentVisit())) # by default its the current visit for $BEAMLINE
 
-        self.save_name  = QTextEdit()
+        self.save_name  = QLineEdit()
         self.save_name.setFixedHeight(2.0*self.save_name.fontMetrics().height())
         self.save_name.setText(str(self.getInitialProcessList()))
         
-        self.scan = QTextEdit()
+        self.scan = QLineEdit()
         self.scan.setFixedHeight(2.0*self.scan.fontMetrics().height())
 
         form = QFormLayout()
@@ -216,7 +218,7 @@ def main(process_list):
     app = QApplication([])
     model = Content()
     model.fopen(process_list)
-    ex = PluginEditor(model)
+    ex = PluginEditor(model)#
     sys.exit(app.exec_())
 
 
