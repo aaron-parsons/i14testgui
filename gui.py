@@ -4,8 +4,9 @@ A quick gui for the pymca fitting
 '''
 
 from content import Content
-from PyQt5.QtWidgets import QApplication, QWidget, QFormLayout, QSpinBox, QLineEdit, QDoubleSpinBox, QGridLayout, QLabel,QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QFormLayout, QSpinBox, QLineEdit, QDoubleSpinBox, QGridLayout, QLabel,QPushButton, QTextEdit
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QTimer
 import sys
 import os
 from subprocess import Popen, PIPE
@@ -74,6 +75,31 @@ class SavuTextBox(QLineEdit):
         print value
         self.parent.model.modify(self.parent.plugin_number, self.key, value)
 
+class SavuLogFileTextBox(QTextEdit):
+    def __init__(self):
+        super(SavuLogFileTextBox, self).__init__()
+        self.setReadOnly(True)
+        self.filehandle = None
+        self.filepath = None
+
+    def setFile(self, filepath):
+        self.filepath = filepath
+
+    def update_text(self):
+        if self.filepath:
+            if not os.path.exists(self.filepath):
+                self.setText("Nothing to display")
+            elif os.path.exists(self.filepath) and not self.filehandle:
+                self.filehandle = open(self.filepath,"r")
+            elif os.path.exists(self.filepath) and self.filehandle:
+                lines = self.filehandle.readlines()
+                self.insertPlainText("".join(lines))
+#                 self.setText(lines)
+            else:
+                print "munchkins"
+        else:
+            self.setText("Nothing to display")
+        
 
 class PluginForm(QWidget):
     '''
@@ -129,12 +155,13 @@ class PluginEditor(QWidget):
             layout.addWidget(pluginform,k+1,0)
             k+=2
         save_stuff = SaveDialog(self.model)
-        layout.addWidget(save_stuff,1,1)
+        layout.addWidget(save_stuff,1,1,k,1)
         self.setLayout(layout)
         w = 2280; h = 1520
         self.resize(w/2,h/2)
         self.setWindowTitle('Savu Processing')
         self.show()
+
 
 class SaveDialog(QWidget):
     def __init__(self, model):
@@ -158,7 +185,6 @@ class SaveDialog(QWidget):
         form.addRow('Visit:',self.visit)
         form.addRow('Process List Name:',self.save_name)
 
-
         self.save_button = QPushButton()
 #         self.save_button.setCheckable(True)
         self.save_button.setText('Save process list')
@@ -172,6 +198,14 @@ class SaveDialog(QWidget):
         self.run_button.setText('Run process!')
         self.run_button.pressed.connect(self.runButtonChecked)
         form.addWidget(self.run_button)
+        
+        self.log_file_display = SavuLogFileTextBox()
+#
+        form.addWidget(self.log_file_display)
+#         
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.log_file_display.update_text)
+        self.timer.start(1000)        
 
         self.setLayout(form)
 
@@ -233,19 +267,22 @@ class SaveDialog(QWidget):
             else:
                 self.runSavu(self.getDataPath(), self.getOutputDirectory()+os.sep + self.getSaveName(), self.getOutputDirectory())
 
+
     def getSavuOutputDirectory(self):
-        path = self.getOutputDirectory() + os.sep + self.getScanNumber()+'_'+self.self.getSaveName()
+        path = self.getOutputDirectory() + os.sep + self.getScanNumber()+'_'+self.getSaveName().split('.')[0]
         return path
 
 
     def getProcessFolder(self):
-        return self.getScanNumber() + '_' + self.getSaveName()
+        return self.getScanNumber() + '_' + self.getSaveName().split('.')[0]
 
     def runSavu(self, datafile, process_list, output_directory):
         launcher_script = savu.savuPath.split('savu')[0]+'mpi/dls/savu_launcher.sh'
         savu_version = '2.0_stable'
         p = Popen(['sh',launcher_script,savu_version,datafile,process_list,output_directory,'-f',self.getProcessFolder()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, __err = p.communicate()
+        self.log_file_display.setFile(self.getSavuOutputDirectory()+os.sep+'user.log')
+        print "thing the log should be in:", 
 
 def main(process_list):
     app = QApplication([])
