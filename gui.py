@@ -277,7 +277,11 @@ class SaveDialog(QWidget):
         return self.getScanNumber() + '_' + self.getSaveName().split('.')[0]
 
     def runSavu(self, datafile, process_list, output_directory):
-        launcher_script = savu.savuPath.split('savu')[0]+'mpi/dls/savu_launcher.sh'
+        #launcher_script = savu.savuPath.split('savu')[0]+'mpi/dls/savu_launcher.sh'#
+        a = Popen(['which','savu_launcher.sh'], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        b = a.stdout.readline()
+        launcher_script = b.splitlines()[0]
+        print launcher_script
         savu_version = '2.0_stable'
         p = Popen(['sh',launcher_script,savu_version,datafile,process_list,output_directory,'-f',self.getProcessFolder()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, __err = p.communicate()
