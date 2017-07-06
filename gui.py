@@ -87,6 +87,7 @@ class SavuLogFileTextBox(QTextEdit):
 
     def update_text(self):
         if self.filepath:
+            print self.filepath
             if not os.path.exists(self.filepath):
                 self.setText("Nothing to display")
             elif os.path.exists(self.filepath) and not self.filehandle:
