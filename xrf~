@@ -1,0 +1,4 @@
+#!/bin/bash
+# loads the xrf gui
+
+python $BEAMLINE_TOOLS_PATH/i14gui.py
