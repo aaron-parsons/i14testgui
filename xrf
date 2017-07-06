@@ -1,0 +1,3 @@
+#!/bin/bash
+# loads the xrf gui
+python i14gui.py
