@@ -8,8 +8,14 @@ from PyQt5.QtWidgets import QApplication, QWidget, QFormLayout, QSpinBox, QLineE
 from PyQt5.QtGui import QFont
 import sys
 import os
+from subprocess import Popen, PIPE
+try:
+    import savu
+except:
+    ImportError("Savu not on the path")
 
 # the following classes could use a refactor since it's all duplication
+DEBUG = False
 
 class SavuIntSpinBox(QSpinBox):
     '''
@@ -64,7 +70,7 @@ class SavuTextBox(QLineEdit):
         self.textChanged.connect(self.updatevalue)
 
     def updatevalue(self):
-        value = str(self.toPlainText().rstrip('\n'))
+        value = str(self.text().rstrip('\n'))
         print value
         self.parent.model.modify(self.parent.plugin_number, self.key, value)
 
@@ -173,42 +179,45 @@ class SaveDialog(QWidget):
         return self.model.filename.split(os.sep)[-1]
         
     def getCurrentVisit(self):
-        from subprocess import Popen, PIPE
         p = Popen(['sh','/dls_sw/apps/mx-scripts/visit_tools/currentvisit',os.environ["BEAMLINE"]], stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        output, __err = p.communicate(b"input data that is passed to subprocess' stdin")
+        output, __err = p.communicate()
         return output
 
     def getVisitDirectory(self):
-        visit = str(self.visit.toPlainText().rstrip('\n').rstrip())
+        visit = str(self.visit.text().rstrip('\n').rstrip())
         return '/dls/%s/data/2017/%s/' % (str(os.environ['BEAMLINE']),visit)
     
     def getSaveName(self):
-        return str(self.save_name.toPlainText().rstrip('\n').rstrip())
+        return str(self.save_name.text().rstrip('\n').rstrip())
 
     def getOutputDirectory(self):
-        op = self.getVisitDirectory() + 'processing/savu'
+        op = self.getVisitDirectory() + 'processing/savu/'
         if not self.output_dir_exists:
             print("Creating output directory....")
             try:
                 os.mkdir(op)
             except OSError:
                 pass
-            else:
-                raise
+            except Exception as e:
+                raise e
+                
             print("Done.")
             self.output_dir_exists = True
         return op 
     
+
+    def getScanNumber(self):
+        scan_number = str(self.scan.text().rstrip('\n').rstrip())
+        return scan_number
+
     def getDataPath(self):
-        scan_number = str(self.scan.toPlainText().rstrip('\n').rstrip())
+        scan_number = self.getScanNumber()
         if str(os.environ['BEAMLINE'])=='i14':
             return self.getVisitDirectory()+'i14-%s.nxs' % scan_number
         elif str(os.environ['BEAMLINE'])=='i08':
             return self.getVisitDirectory()+'nexus/i08-%s.nxs' % scan_number
         else:
             raise NameError("I don't recognise this beamline!")
-        
-        
 
     def saveButtonChecked(self):
         if self.save_button.isDown():
@@ -217,9 +226,26 @@ class SaveDialog(QWidget):
 
     def runButtonChecked(self):
         if self.run_button.isDown():
-            import subprocess
-            print "I should run something here"
-            print "On data" + self.getDataPath()
+            global DEBUG
+            if DEBUG:
+                print "I should run something here"
+                print "On data" + self.getDataPath()
+            else:
+                self.runSavu(self.getDataPath(), self.getOutputDirectory()+os.sep + self.getSaveName(), self.getOutputDirectory())
+
+    def getSavuOutputDirectory(self):
+        path = self.getOutputDirectory() + os.sep + self.getScanNumber()+'_'+self.self.getSaveName()
+        return path
+
+
+    def getProcessFolder(self):
+        return self.getScanNumber() + '_' + self.getSaveName()
+
+    def runSavu(self, datafile, process_list, output_directory):
+        launcher_script = savu.savuPath.split('savu')[0]+'mpi/dls/savu_launcher.sh'
+        savu_version = '2.0_stable'
+        p = Popen(['sh',launcher_script,savu_version,datafile,process_list,output_directory,'-f',self.getProcessFolder()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        output, __err = p.communicate()
 
 def main(process_list):
     app = QApplication([])
@@ -227,8 +253,6 @@ def main(process_list):
     model.fopen(process_list)
     ex = PluginEditor(model)#
     sys.exit(app.exec_())
-
-
 
 if __name__ == '__main__':
     process_list =main(sys.argv[1])
