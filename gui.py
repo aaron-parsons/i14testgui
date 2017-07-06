@@ -27,7 +27,7 @@ class SavuIntSpinBox(QSpinBox):
 
     def updatevalue(self):
         val = str(self.value())
-        print val
+        print(val)
         self.parent.model.modify(self.parent.plugin_number, self.key, val)
 
 class SavuDoubleSpinBox(QDoubleSpinBox):
@@ -46,7 +46,7 @@ class SavuDoubleSpinBox(QDoubleSpinBox):
 
     def updatevalue(self):
         val = str(self.value())
-        print val
+        print(val)
         self.parent.model.modify(self.parent.plugin_number, self.key, val)
 
 
@@ -65,7 +65,7 @@ class SavuTextBox(QTextEdit):
 
     def updatevalue(self):
         value = str(self.toPlainText().rstrip('\n'))
-        print value
+        print(value)
         self.parent.model.modify(self.parent.plugin_number, self.key, value)
 
 
@@ -96,7 +96,7 @@ class PluginForm(QWidget):
 
     def getModel(self):
         return self.model
-    
+
 
 class PluginEditor(QWidget):
     '''
@@ -133,13 +133,13 @@ class SaveDialog(QWidget):
         self.model = model
         self.output_dir_exists = None
         super(SaveDialog, self).__init__()
-        
+
         self.visit  = QTextEdit()
         self.visit.setFixedHeight(2.0*self.visit.fontMetrics().height())
-        
+
         self.save_name  = QTextEdit()
         self.save_name.setFixedHeight(2.0*self.save_name.fontMetrics().height())
-        
+
         self.scan = QTextEdit()
         self.scan.setFixedHeight(2.0*self.scan.fontMetrics().height())
 
@@ -168,7 +168,7 @@ class SaveDialog(QWidget):
     def getVisitDirectory(self):
         visit = str(self.visit.toPlainText().rstrip('\n').rstrip())
         return '/dls/i14/data/2017/%s/' % visit
-    
+
     def getSaveName(self):
         return str(self.save_name.toPlainText().rstrip('\n').rstrip())
 
@@ -185,8 +185,8 @@ class SaveDialog(QWidget):
                 raise
             print("Done.")
             self.output_dir_exists = True
-        return op 
-    
+        return op
+
     def getDataPath(self):
         scan_number = str(self.scan.toPlainText().rstrip('\n').rstrip())
         return self.getVisitDirectory()+'i14-%s.nxs' % scan_number
@@ -199,16 +199,16 @@ class SaveDialog(QWidget):
     def runButtonChecked(self):
         if self.run_button.isDown():
             import subprocess
-            print "I should run something here"
-            print "On data" + self.getDataPath()
+            print("I should run something here")
+            print("On data" + self.getDataPath())
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    process_list ='/dls/science/users/clb02321/DAWN_stable/Savu/Savu/test_data/test_process_lists/pymca_test.nxs'
+    process_list ='/dls_sw/apps/savu/dawn_version/Savu/test_data/test_process_lists/pymca_test.nxs'
     model = Content()
     model.fopen(process_list)
-    
+
     ex = PluginEditor(model)
     sys.exit(app.exec_())
 
