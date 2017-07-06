@@ -286,7 +286,7 @@ class SaveDialog(QWidget):
         p = Popen(['sh',launcher_script,savu_version,datafile,process_list,output_directory,'-f',self.getProcessFolder()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, __err = p.communicate()
         self.log_file_display.setFile(self.getSavuOutputDirectory()+os.sep+'user.log')
-        print "thing the log should be in:", 
+        print "thing the log should be in:", self.log_file_display
 
 def main(process_list):
     app = QApplication([])
