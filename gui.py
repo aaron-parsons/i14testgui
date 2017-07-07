@@ -34,7 +34,7 @@ class SavuIntSpinBox(QSpinBox):
 
     def updatevalue(self):
         val = str(self.value())
-        print val
+#         print val
         self.parent.model.modify(self.parent.plugin_number, self.key, val)
 
 class SavuDoubleSpinBox(QDoubleSpinBox):
@@ -53,7 +53,7 @@ class SavuDoubleSpinBox(QDoubleSpinBox):
 
     def updatevalue(self):
         val = str(self.value())
-        print val
+#         print val
         self.parent.model.modify(self.parent.plugin_number, self.key, val)
 
 
@@ -72,7 +72,7 @@ class SavuTextBox(QLineEdit):
 
     def updatevalue(self):
         value = str(self.text().rstrip('\n'))
-        print value
+#         print value
         self.parent.model.modify(self.parent.plugin_number, self.key, value)
 
 class SavuLogFileTextBox(QTextEdit):
@@ -87,7 +87,7 @@ class SavuLogFileTextBox(QTextEdit):
 
     def update_text(self):
         if self.filepath:
-            print self.filepath
+#             print self.filepath
             if not os.path.exists(self.filepath):
                 self.setText("Nothing to display")
             elif os.path.exists(self.filepath) and not self.filehandle:
@@ -287,7 +287,7 @@ class SaveDialog(QWidget):
         p = Popen(['sh',launcher_script,savu_version,datafile,process_list,output_directory,'-f',self.getProcessFolder()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, __err = p.communicate()
         self.log_file_display.setFile(self.getSavuOutputDirectory()+os.sep+'user.log')
-        print "thing the log should be in:", self.getSavuOutputDirectory()+os.sep+'user.log'
+#         print "thing the log should be in:", self.getSavuOutputDirectory()+os.sep+'user.log'
 
 def main(process_list):
     app = QApplication([])
