@@ -24,12 +24,15 @@ def convert_to_pymca_rgb(processed_data, outfolder):
     titles = "  ".join(titles)
     k = 0 
     for channel in det_elem:
-        outfilename = (outfolder +os.sep+ 'pymca_rgb_converted_channel_'+str(channel)+'.dat') 
+        channel_folder = outfolder+"channel_"+channel
+        if not os.path.exists(channel_folder):
+            os.makedirs(channel_folder)
+        outfilename = (channel_folder +os.sep+ 'pymca_rgb_converted.dat') 
         with open(outfilename,'wb') as f:
             if k==0:
                 f.write(titles+"\n")
             for row in range(data.shape[0]):
-                print("%d of %d" % (row, data.shape[0]))
+                print("%d of %d" % (row+1, data.shape[0]))
                 for column in range(data.shape[1]):
                     line = list(data[row,column,det_elem])
                     line = [str(ix) for ix in line]
@@ -53,6 +56,9 @@ def convert_to_pymca_edf(processed_data, outfolder):
     
     for num, key in enumerate(elements):
         for channel in det_elem:
+            channel_folder = outfolder+"channel_"+channel
+            if not os.path.exists(channel_folder):
+                os.makedirs(channel_folder)
             foo = data[:,:,channel,num]
             header = collections.OrderedDict()     
             header['HeaderID'] = 'EH:000001:000000:000000'
@@ -65,7 +71,7 @@ def convert_to_pymca_edf(processed_data, outfolder):
             out_title = "%s_channel_%s" % (key.replace(" ","_"), str(channel))
             header['Title'] = out_title
             fout = EdfImage(foo, header)
-            fout.write(outfolder+os.sep+out_title+'.edf')
+            fout.write(channel_folder+os.sep+out_title+'.edf')
     
 if __name__ == '__main__':
     import sys
