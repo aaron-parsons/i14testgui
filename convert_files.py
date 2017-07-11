@@ -45,7 +45,7 @@ def convert_to_pymca_edf(processed_data, outfolder):
     peak_indices  = f['entry/final_result_fluo'].attrs['PeakElements_indices']
     elements = list(f['entry/final_result_fluo/PeakElements'][...])
     data = f['entry/final_result_fluo/data']
-    det_elem = range(data = f['entry/final_result_fluo/data'][-2])
+    det_elem = range(f['entry/final_result_fluo/data'].shape[-2])
     import collections
     import numpy as np
     from fabio.edfimage import EdfImage
@@ -69,7 +69,10 @@ def convert_to_pymca_edf(processed_data, outfolder):
     
 if __name__ == '__main__':
     import sys
-    convert_to_pymca_rgb(sys.argv[1], sys.argv[2])
-    convert_to_pymca_edf(sys.argv[1], sys.argv[2])
+    if sys.argv<1:
+        print("Not enough arguments supplied")
+    else:
+        convert_to_pymca_rgb(sys.argv[1], sys.argv[2])
+        convert_to_pymca_edf(sys.argv[1], sys.argv[2])
 
     
