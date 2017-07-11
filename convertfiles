@@ -1,0 +1,3 @@
+#!/bin/bash
+
+python $BEAMLINE_TOOLS_PATH/convert_files.py $1 $2
