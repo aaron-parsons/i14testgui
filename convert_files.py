@@ -12,28 +12,25 @@ def convert_to_pymca_rgb(processed_data, outfolder):
     import h5py as h5
     f = h5.File(processed_data,'r')
     scan_axes = 0,1
-    
     peak_indices  = f['entry/final_result_fluo'].attrs['PeakElements_indices']
     elements = list(f['entry/final_result_fluo/PeakElements'][...])
     data = f['entry/final_result_fluo/data']
-    det_elem = range(data.shape[-2])
-     
+    det_channels = range(data.shape[-2]) 
     titles = ['row','column']
     titles.extend(elements)
     titles = [ix.replace(" ", "-") for ix in titles]
     titles = "  ".join(titles)
     k = 0 
-    for channel in det_elem:
-        channel_folder = outfolder+os.sep+"channel_"+str(channel)
-        print channel_folder
+    for det_elem in det_channels:
+        channel_folder = outfolder+os.sep+"channel_"+str(det_elem)
         if not os.path.exists(channel_folder):
             os.makedirs(channel_folder)
-        outfilename = (channel_folder +os.sep+ 'pymca_rgb_converted.dat') 
-        with open(outfilename,'wb') as f:
+        outfile = channel_folder + os.sep + 'pymca_rgb_converted.dat'
+        with open(outfile,'wb') as f:
             if k==0:
                 f.write(titles+"\n")
             for row in range(data.shape[0]):
-                print("%d of %d" % (row+1, data.shape[0]))
+                print("%d of %d" % (row, data.shape[0]))
                 for column in range(data.shape[1]):
                     line = list(data[row,column,det_elem])
                     line = [str(ix) for ix in line]
@@ -41,6 +38,7 @@ def convert_to_pymca_rgb(processed_data, outfolder):
                     extra.extend(line)
                     line_to_write = "  ".join(extra)
                     f.write(line_to_write+"\n")
+# 
 # 
 def convert_to_pymca_edf(processed_data, outfolder):
     import h5py as h5
