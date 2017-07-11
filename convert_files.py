@@ -24,7 +24,8 @@ def convert_to_pymca_rgb(processed_data, outfolder):
     titles = "  ".join(titles)
     k = 0 
     for channel in det_elem:
-        channel_folder = outfolder+"channel_"+str(channel)
+        channel_folder = outfolder+os.sep+"channel_"+str(channel)
+        print channel_folder
         if not os.path.exists(channel_folder):
             os.makedirs(channel_folder)
         outfilename = (channel_folder +os.sep+ 'pymca_rgb_converted.dat') 
@@ -56,7 +57,7 @@ def convert_to_pymca_edf(processed_data, outfolder):
     
     for num, key in enumerate(elements):
         for channel in det_elem:
-            channel_folder = outfolder+"channel_"+str(channel)
+            channel_folder = outfolder+os.sep+"channel_"+str(channel)
             if not os.path.exists(channel_folder):
                 os.makedirs(channel_folder)
             foo = data[:,:,channel,num]
