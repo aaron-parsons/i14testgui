@@ -1,4 +1,5 @@
 
 import gui
 import os
-gui.main('/dls_sw/os.environ["BEAMLINE"]/software/analysis/pymca.nxs')
+BEAMLINE = os.environ["BEAMLINE"]
+gui.main('/dls_sw/'+str(BEAMLINE)+'/software/analysis/pymca.nxs')

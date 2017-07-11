@@ -6,7 +6,7 @@ A quick gui for the pymca fitting
 from content import Content
 from PyQt5.QtWidgets import QApplication, QWidget, QFormLayout, QSpinBox, QLineEdit, QDoubleSpinBox, QGridLayout, QLabel,QPushButton, QTextEdit
 from PyQt5.QtGui import QFont
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer, Qt
 import sys
 import os
 from subprocess import Popen, PIPE
@@ -81,20 +81,22 @@ class SavuLogFileTextBox(QTextEdit):
         self.setReadOnly(True)
         self.filehandle = None
         self.filepath = None
+        self.setDisabled(True)
 
     def setFile(self, filepath):
         self.filepath = filepath
 
     def update_text(self):
         if self.filepath:
-#             print self.filepath
             if not os.path.exists(self.filepath):
                 self.setText("Nothing to display")
             elif os.path.exists(self.filepath) and not self.filehandle:
                 self.filehandle = open(self.filepath,"r")
+                self.clear()
             elif os.path.exists(self.filepath) and self.filehandle:
                 lines = self.filehandle.readlines()
                 self.insertPlainText("".join(lines))
+                self.verticalScrollBar().setValue(self.verticalScrollBar().maximum()) # autoscroll to the bottom to view updated content.
 #                 self.setText(lines)
             else:
                 print "munchkins"
@@ -286,6 +288,10 @@ class SaveDialog(QWidget):
         savu_version = '2.0_stable'
         p = Popen(['sh',launcher_script,savu_version,datafile,process_list,output_directory,'-f',self.getProcessFolder()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, __err = p.communicate()
+        self.log_file_display.clear()
+        self.log_file_display.filehandle = None # need to reinitialise these for second call.
+        self.log_file_display.filepath = None # need to reinitialise these
+        self.log_file_display.setText('Process started. Waiting for log file....')
         self.log_file_display.setFile(self.getSavuOutputDirectory()+os.sep+'user.log')
 #         print "thing the log should be in:", self.getSavuOutputDirectory()+os.sep+'user.log'
 
