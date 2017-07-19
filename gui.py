@@ -253,6 +253,8 @@ class SaveDialog(QWidget):
             return self.getVisitDirectory()+'i14-%s.nxs' % scan_number
         elif str(os.environ['BEAMLINE'])=='i08':
             return self.getVisitDirectory()+'nexus/i08-%s.nxs' % scan_number
+        elif str(os.environ['BEAMLINE'])=='i18':
+            return self.getVisitDirectory()+'i18-%s.nxs' % scan_number
         else:
             raise NameError("I don't recognise this beamline!")
 
