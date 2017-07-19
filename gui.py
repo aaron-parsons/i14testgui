@@ -127,8 +127,7 @@ class PluginForm(QWidget):
                 form.addRow(key, SavuTextBox(self, key, value))
             if type(value) == type([]):
                 form.addRow(key, SavuTextBox(self, key, value))
-            else:
-                print("I have missed some variables out because I didn't know how to display them!")
+
         self.setLayout(form)
 #         self.resize(250, 250)
 #         self.move(300, 300)
