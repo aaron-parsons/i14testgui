@@ -290,8 +290,8 @@ class SaveDialog(QWidget):
         b = a.stdout.readline()
         launcher_script = b.splitlines()[0]
         print launcher_script
-        savu_version = '2.0_stable'
-        p = Popen(['sh',launcher_script,savu_version,datafile,process_list,output_directory,'-f',self.getProcessFolder()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+        savu_version = '2.0_branch'#'sh',launcher_script,savu_version,'PREVIEW
+        p = Popen(['sh', launcher_script, savu_version,'PREVIEW',datafile,process_list,output_directory,'-f',self.getProcessFolder()], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, __err = p.communicate()
         self.log_file_display.clear()
         self.log_file_display.filehandle = None # need to reinitialise these for second call.
