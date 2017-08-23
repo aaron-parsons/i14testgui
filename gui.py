@@ -236,7 +236,7 @@ class SaveDialog(QWidget):
         visit = str(self.visit.text().rstrip('\n').rstrip())
         basepath = self.getBasePath()
         standard_path = '/dls/%s/data/2017/%s/'
-        return basepath + standard_path % (str(os.environ['BEAMLINE']),visit)
+        return (basepath + standard_path) % (str(os.environ['BEAMLINE']),visit)
     
     def getSaveName(self):
         return str(self.save_name.text().rstrip('\n').rstrip())
