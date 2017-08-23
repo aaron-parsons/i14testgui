@@ -175,6 +175,10 @@ class SaveDialog(QWidget):
         self.output_dir_exists = None
         super(SaveDialog, self).__init__()
         
+        self.base_path = QLineEdit()
+        self.base_path.setFixedHeight(2.0*self.base_path.fontMetrics().height())
+        self.base_path.setText("") # by default its the current visit for $BEAMLINE
+
         self.visit  = QLineEdit()
         self.visit.setFixedHeight(2.0*self.visit.fontMetrics().height())
         self.visit.setText(str(self.getCurrentVisit())) # by default its the current visit for $BEAMLINE
@@ -188,6 +192,7 @@ class SaveDialog(QWidget):
 
         form = QFormLayout()
 
+        form.addRow('Base Path', self.base_path)
         form.addRow('Visit:',self.visit)
         form.addRow('Process List Name:',self.save_name)
 
@@ -217,15 +222,21 @@ class SaveDialog(QWidget):
 
     def getInitialProcessList(self):
         return self.model.filename.split(os.sep)[-1]
-        
+    
+    def getBasePath(self):
+        return self.base_path
+
     def getCurrentVisit(self):
         p = Popen(['sh','/dls_sw/apps/mx-scripts/visit_tools/currentvisit',os.environ["BEAMLINE"]], stdin=PIPE, stdout=PIPE, stderr=PIPE)
         output, __err = p.communicate()
         return output
 
+
     def getVisitDirectory(self):
         visit = str(self.visit.text().rstrip('\n').rstrip())
-        return '/dls/%s/data/2017/%s/' % (str(os.environ['BEAMLINE']),visit)
+        basepath = self.getBasePath()
+        standard_path = '/dls/%s/data/2017/%s/'
+        return basepath + standard_path % (str(os.environ['BEAMLINE']),visit)
     
     def getSaveName(self):
         return str(self.save_name.text().rstrip('\n').rstrip())
