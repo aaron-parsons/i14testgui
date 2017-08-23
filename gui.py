@@ -224,7 +224,7 @@ class SaveDialog(QWidget):
         return self.model.filename.split(os.sep)[-1]
     
     def getBasePath(self):
-        return self.base_path
+        return str(self.base_path.text().rstrip('\n').rstrip())
 
     def getCurrentVisit(self):
         p = Popen(['sh','/dls_sw/apps/mx-scripts/visit_tools/currentvisit',os.environ["BEAMLINE"]], stdin=PIPE, stdout=PIPE, stderr=PIPE)
